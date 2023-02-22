@@ -35,8 +35,3 @@ print(summed_relevant_df)
 
 # Top 3 Countries in order : Australia, USA & New Zealand
 
-
-sum_df.loc["Sum"] = sum_df.sum(axis=0)
-print(sum_df)
-
-# Top 3 Countries in order : Australia, USA & New Zealand
