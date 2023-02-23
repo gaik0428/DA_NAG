@@ -1,46 +1,38 @@
 import pandas as pd
 import openpyxl as pip
-import matplotlib.pyplot as pls
+import matplotlib.pyplot as plt
 
-# read the excel, filter the region & filter the timeframe
-relevant_df = pd.read_excel(r"C:\Users\LENOVO\Documents\DEG\- Applied scripting\ASP project\project_file.xlsx",  usecols = 'A, AE, AF, AG, AH, AI')
-relevant_df = relevant_df.loc[360:479]
+# read excel
+whole_df = pd.read_excel(r"C:\Users\LENOVO\Documents\DEG\- Applied scripting\ASP project\project_file.xlsx")
+
+# rename blank column
+whole_df = whole_df.rename(columns={'   ':'Date'})
+
+# split Date column to make life easier
+date = whole_df["Date"].str.split(' ', n=2, expand = True)
+whole_df["Year"] = date[1]
+whole_df["Month"] = date[2]
+print(whole_df.head())
+
+# filter the regions & timeframe
+whole_df = whole_df.loc[(whole_df['Year'] >= '2008')
+                        & (whole_df['Year'] <= '2017')]
+whole_df = whole_df[[ ' USA ', ' Canada ', ' Australia ', ' New Zealand ', ' Africa ', 'Year']]
+relevant_df = whole_df
 print(relevant_df)
 
-# to find the column names
-print(relevant_df.columns)
-
-# rename the blank column
-relevant_df = relevant_df.rename(columns={'   ':'Date'})
-print(relevant_df)
-
-# split the column
-date = relevant_df["Date"].str.split(' ', n=2, expand = True)
-relevant_df["Year"] = date[1]
-relevant_df["Month"] = date[2]
-print(relevant_df.head())
-
-# remove unnecessary column
-relevant_df.pop('Date')
-relevant_df.pop('Month')
-print(relevant_df)
-
-# change columns' datatypes
-relevant_df[[ ' USA ', ' Canada ', ' Australia ', ' New Zealand ', ' Africa ']].apply(pd.to_numeric)
+# change datatypes
+relevant_df = relevant_df.astype(int)
 print(relevant_df.dtypes)
 
-# sum the regions over 10 yrs [ separate ] in a new dataframe
-yr_summed_df = relevant_df.groupby('Year').sum()
-yr_summed_df.loc["Sum"] = yr_summed_df.sum(axis=0)
-print(yr_summed_df)
-
-# Only the total sum for visualization
-total_summed_df = yr_summed_df.iloc[[10]]
+# find the total over 10 yrs
+relevant_df.pop('Year')
+total_summed_df = relevant_df.sum().sort_values(ascending=False)
 print(total_summed_df)
 
-# visualization for top 3 countries over 10 yrs
-Top_countries_bc = total_summed_df.plot(kind="bar", title = 'International Monthly Visitors for 2008 to 2017', stacked = False ,figsize=(10,10), legend =True,fontsize=12)
-pls.show()
+# Top 3 countries
+print(total_summed_df.head(3))
 
-# Top 3 Countries in order : Australia, USA & New Zealand
-
+# Visualization
+Top_countries_bc = total_summed_df.plot(kind="bar", title = 'International Monthly Visitors for 2008 to 2017', stacked = False ,figsize=(10,10),fontsize=12)
+plt.show()
