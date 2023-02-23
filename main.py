@@ -3,7 +3,7 @@ import openpyxl as pip
 import matplotlib.pyplot as plt
 
 # read excel
-whole_df = pd.read_excel(r"C:\Users\Gaik Hwa\PycharmProjects\DA_NAG\Project_File.xlsx")
+whole_df = pd.read_excel(r"")
 
 # rename blank column
 whole_df = whole_df.rename(columns={'   ':'Date'})
